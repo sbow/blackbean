@@ -1,12 +1,12 @@
-%   blackbean.py
-%  
-%   An office coffee machine controller
-%
-%   https://github.com/sbow/blackbean
-%   
-%   v0.1
-%   2019/09/12
-%   Initial framework of controller
+#   blackbean.py
+#  
+#   An office coffee machine controller
+#
+#   https://github.com/sbow/blackbean
+#   
+#   v0.1
+#   2019/09/12
+#   Initial framework of controller
 
 PIN_RELAY = 26
 PIN_RED   = 5
@@ -25,5 +25,6 @@ led = RGBLED(PIN_RED, PIN_GREEN, PIN_BLUE)
 relay = LED(PIN_RELAY)
 
 led.pulse(T_PULSE, T_PULSE, C_TEAL, C_GREEN)
+relay.blink(1)
 
 sleep(10)
