@@ -1,10 +1,12 @@
-# blackbean.py
-#
-# An office coffee machine controller
-# 
-# v0.1
-# 2019/09/12
-#- initial framework of controller
+%   blackbean.py
+%  
+%   An office coffee machine controller
+%
+%   https://github.com/sbow/blackbean
+%   
+%   v0.1
+%   2019/09/12
+%   Initial framework of controller
 
 PIN_RELAY = 26
 PIN_RED   = 5
