@@ -85,10 +85,10 @@ def TftDemo(self):
 def RelayOn(self):
 	relay.On()
 
-def RelayOff(self);
+def RelayOff(self):
 	relay.Off()
 
-def LedColor(self, rgb=(1,1,1))
+def LedColor(self, rgb=(1,1,1)):
 	led.value = rgb
 
 def DbConnect(self):
