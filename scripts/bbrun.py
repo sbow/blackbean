@@ -29,47 +29,30 @@
 #Coffee Maker Database Setup
 import datetime
 from datetime import timedelta
-import bbsql
+import blackbean
 DBPATH = r''
 DBNAME = r'bbsqlite.db'
 
-#TFT Display Setup - ST7789 Adafruit 240x240 1.54" SPI
-PIN_DC = 24 
-PIN_RST = 23
-SPI_PORT = 0
-SPI_DEVICE = 0
 
-# Solid State Relay Setup - Omron
-PIN_RELAY = 26
-relay = None
-
-# RGB LED Setup - Note CA LED: values reversed, led.On() turns OFF led
-PIN_RED   = 5
-PIN_GREEN = 6
-PIN_BLUE  = 4
-C_GREEN = (1,0.5,1)
-C_TEAL  = (1,0.8,0.5)
-T_PULSE = 0.5
-
-def scan(scan, date):
+def scan(bb, scan, date):
     sql_insert_scan =   " INSERT INTO Scan(code, scan_date, date_real)" \
                         +" VALUES ('"+scan[1]+"', '"+date.isoformat()+"', 'N');"
     print(sql_insert_scan)
-    #myDb.commandcommit(sql_insert_scan) # commented out to not duplicate
+    #bb.bbdb.commandcommit(sql_insert_scan) # commented out to not duplicate
 
-def drink(myDb, scan):
+def drink(bb, scan):
     scan_id = scan[0]
     code = scan[1]
     scan_date = scan[2]
     date_real = scan[3]
     sql_find_code = "SELECT card_id FROM Card WHERE code in('"+code+"');"
     print("Scan ID:" + str(scan_id) + " Code=" + code + " scan_date=" + scan_date)
-    found_card = myDb.commandfetchall(sql_find_code)
+    found_card = bb.bbdb.commandfetchall(sql_find_code)
     if found_card != []:
         # found card
         card_id = found_card[0][0]
         sql_det_acces = "SELECT active FROM Card WHERE code in('"+code+"');"
-        is_active = myDb.commandfetchall(sql_det_acces)
+        is_active = bb.bbdb.commandfetchall(sql_det_acces)
         if is_active == []:
             print('Card not found')
         else:
@@ -78,7 +61,7 @@ def drink(myDb, scan):
                 print('Yes for drink')
                 sql_det_scan_date = "SELECT scan_date FROM Scan WHERE scan_id"\
                                     " in('"+str(scan_id)+"');"
-                found_scan_date = myDb.commandfetchall(sql_det_scan_date)
+                found_scan_date = bb.bbdb.commandfetchall(sql_det_scan_date)
                 if found_scan_date == []:
                     print('Scan date not found')
                 else:
@@ -86,7 +69,7 @@ def drink(myDb, scan):
                     scan_date = found_scan_date[0][0]
                     sql_det_scan_real = "SELECT date_real FROM Scan WHERE \
                             scan_id in('"+str(scan_id)+"');"
-                    found_date_real = myDb.commandfetchall(sql_det_scan_real)
+                    found_date_real = bb.bbdb.commandfetchall(sql_det_scan_real)
                     if found_date_real ==[]:
                         print('Could not determine if date_real was real')
                     else:
@@ -94,7 +77,7 @@ def drink(myDb, scan):
                         sql_get_personid = "SELECT person_id FROM Card WHERE \
                                 code in ('"+code+"');"
                         found_person_id = \
-                        myDb.commandfetchall(sql_get_personid)
+                        bb.bbdb.commandfetchall(sql_get_personid)
                         if found_person_id == []:
                             print('Cound not determine person_id')
                         else:
@@ -105,9 +88,17 @@ def drink(myDb, scan):
                                 + found_date_real[0][0] + "','" \
                                 + str(found_person_id[0][0]) + "');" 
                             print(sql_write_drink)
-                            # myDb.commandcommit(sql_write_drink) # commentedout 
+                            # bb.bbdb.commandcommit(sql_write_drink) # commentedout 
             else:
                 print('Card not active')
 
-    dev main():
-
+# MAIN:
+bb = blackbean.bbrun() # start blackbean program
+bb.DrawHome() # display homescreen
+bb.LedStandby()  # pulse LED
+bb.DrawBrew()
+bb.LedBrew()
+bb.DrawDenied()
+bb.LedDenied()
+bb.DrawAdmin()
+bb.LedAdmin()

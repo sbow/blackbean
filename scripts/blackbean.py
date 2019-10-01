@@ -8,7 +8,7 @@
 #   2019/09/12
 #   Initial framework of controller
 
-import sqlite3
+import bbsql # sqlite database interface class
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
@@ -18,13 +18,11 @@ import Adafruit_GPIO.SPI as SPI
 from gpiozero import RGBLED, LED
 from time import sleep
 
-
-
 class bbrun:
     #Coffee Maker Database Setup
-    DATABASE = 'blackbean.db'
-    con = None
-    cursorObj = None
+    DATABASE = r'blackbean.db'
+    DATAPATH = r''
+    bbdb = None
     
     #TFT Display Setup - ST7789 Adafruit 240x240 1.54" SPI
     PIN_DC = 24 
@@ -62,6 +60,9 @@ class bbrun:
     	# Can pass any tuple of blue, green, red values (from 0 to 255 each).
     	self.disp.clear((255, 0, 0))
     
+        # Initialize blackbean database class
+        self.bbdb = bbsql.bbdb(self.DATAPATH, self.DATABASE)
+
     def LedDemo(self):
     	self.led.pulse(self.T_PULSE, self.T_PULSE, self.C_TEAL, self.C_GREEN)
     	sleep(10)
@@ -99,10 +100,6 @@ class bbrun:
     
     def LedColor(self, rgb=(1,1,1)):
     	self.led.value = rgb
-    
-    def DbConnect(self):
-    	con = sqlite3.connect(self.DATABASE) 
-    	cursorObj = con.cursor()
     
     # Define a function to create rotated text.  Unfortunately PIL doesn't have good
     # native support for rotated fonts, but this function can be used to make a
@@ -234,3 +231,29 @@ class bbrun:
         self.DrawRotatedText(\
                 self.disp.buffer, '4 Exit', (10, 190), angle, fonttwo, fill=(230,230,230))
         self.disp.display()
+
+    # Standbye Pulse
+    def LedStandby(self):
+        T_PULSE = 2
+    	self.led.pulse(T_PULSE, T_PULSE, self.C_TEAL, self.C_GREEN)
+
+    # Brew Pulse
+    def LedBrew(self):
+        T_PULSE = 0.5
+        COLOR_ON = (1,0,1)
+        COLOR_OFF = (1,1,1)
+    	self.led.pulse(T_PULSE, T_PULSE, COLOR_ON, COLOR_OFF)
+
+    # Denied Pulse
+    def LedDenied(self):
+        T_PULSE = 0.5
+        COLOR_ON = (0,1,1)
+        COLOR_OFF = (1,1,1)
+    	self.led.pulse(T_PULSE, T_PULSE, COLOR_ON, COLOR_OFF)
+
+    # Admin Pulse
+    def LedAdmin(self):
+        T_PULSE = 0.1
+        COLOR_ON = (1,1,0.5)
+        COLOR_OFF = (0.5,1,0.5)
+    	self.led.pulse(T_PULSE, T_PULSE, COLOR_ON, COLOR_OFF)
