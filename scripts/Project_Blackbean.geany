@@ -20,6 +20,7 @@ indent_mode=2
 [project]
 name=Project Blackbean
 base_path=/home/pi/git/blackbean/scripts
+description=
 
 [long line marker]
 long_line_behaviour=1
@@ -27,7 +28,7 @@ long_line_column=72
 
 [files]
 current_page=0
-FILE_NAME_0=981;Python;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2Fgit%2Fblackbean%2Fscripts%2Fblackbean.py;0;4
+FILE_NAME_0=1379;Python;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2Fgit%2Fblackbean%2Fscripts%2Fblackbean.py;0;4
 FILE_NAME_1=1266;Python;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2Fgit%2FAdafruit_Python_ST7789%2Fexamples%2Fimage.py;0;4
 
 [VTE]
