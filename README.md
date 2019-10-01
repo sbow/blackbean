@@ -45,6 +45,7 @@ bb.TftDemo()
 | TFT Display   | RST   | Rpi        | 23    |
 | TFT Display   | TCS   | Rpi        | CE0   |
 | TFT Display   | SI    | Rpi        | MOSI  |
+| TFT Display   | SO    | No Connect |       |
 | TFT Display   | SCK   | Rpi        | SCLK  |
 | TFT Display   | Gnd   | Rpi        | Gnd   |
 | TFT Display   | 3v3   | Rpi        | 3V3   |

@@ -48,7 +48,19 @@ class bbrun:
 
     def __init__(self):
     	self.led = RGBLED(self.PIN_RED, self.PIN_GREEN, self.PIN_BLUE)
+        self.led.value = (1,1,0)
+
     	self.relay = LED(self.PIN_RELAY)
+    
+    	# Create TFT LCD display class.
+    	self.disp = TFT.ST7789(self.PIN_DC, rst=self.PIN_RST, \
+                            spi=SPI.SpiDev(self.SPI_PORT, self.SPI_DEVICE, \
+                                           max_speed_hz=64000000))
+    	# Initialize display.
+    	self.disp.begin()
+    	# Clear the display to a red background.
+    	# Can pass any tuple of blue, green, red values (from 0 to 255 each).
+    	self.disp.clear((255, 0, 0))
     
     def LedDemo(self):
     	self.led.pulse(self.T_PULSE, self.T_PULSE, self.C_TEAL, self.C_GREEN)
@@ -59,28 +71,21 @@ class bbrun:
     	sleep(10)
     	
     def TftDemo(self):
-    	# Create TFT LCD display class.
-    	self.disp = TFT.ST7789(self.PIN_DC, rst=self.PIN_RST, spi=SPI.SpiDev(self.SPI_PORT, self.SPI_DEVICE, max_speed_hz=64000000))
-    
-    	# Initialize display.
-    	self.disp.begin()
-    
-    	# Clear the display to a red background.
-    	# Can pass any tuple of red, green, blue values (from 0 to 255 each).
-    	self.disp.clear((255, 0, 0))
-    
     	# Get a PIL Draw object to start drawing on the display buffer.
     	draw = self.disp.draw()
     
     	# Draw a cyan triangle with a black outline.
-    	draw.polygon([(10, 275), (110, 240), (110, 310)], outline=(0,0,0), fill=(0,255,255))
+    	draw.polygon(   [(10, 275), (110, 240), (110, 310)], outline=(0,0,0), \
+                        fill=(0,255,255))
     
     	# Load default font.
     	font = ImageFont.load_default()	
     	
     	# Write two lines of white text on the buffer, rotated 90 degrees counter clockwise.
-    	self.draw_rotated_text(self.disp.buffer, 'Hello World!', (150, 120), 90, font, fill=(255,255,255))
-    	self.draw_rotated_text(self.disp.buffer, 'This is a line of text.', (170, 90), 90, font, fill=(255,255,255))
+    	self.DrawRotatedText(self.disp.buffer, 'Hello World!', (150, 120), \
+                            90, font, fill=(255,255,255))
+    	self.DrawRotatedText(self.disp.buffer, 'This is a line of text.', \
+                            (170, 90), 90, font, fill=(255,255,255))
     
     	# Write buffer to display hardware, must be called to make things visible on the
     	# display!
@@ -102,7 +107,8 @@ class bbrun:
     # Define a function to create rotated text.  Unfortunately PIL doesn't have good
     # native support for rotated fonts, but this function can be used to make a
     # text image and rotate it so it's easy to paste in the buffer.
-    def draw_rotated_text(self, image, text, position, angle, font, fill=(255,255,255)):
+    def DrawRotatedText(self, image, text, position, angle, font, \
+                          fill=(255,255,255)):
         # Get rendered font width and height.
         draw = ImageDraw.Draw(image)
         width, height = draw.textsize(text, font=font)
@@ -115,3 +121,116 @@ class bbrun:
         rotated = textimage.rotate(angle, expand=1)
         # Paste the text into the image, using it as a mask for transparency.
         image.paste(rotated, position, rotated)
+
+    # Display Homescreen
+    def DrawHome(self):
+        font = ImageFont.truetype('Play With Fire.ttf',42)
+        fonttwo = ImageFont.truetype('Momt___.ttf',22)
+        angle = 0
+        self.disp.buffer.paste((0,0,0), (0, 0, 240, 240))
+        self.DrawRotatedText( \
+                self.disp.buffer, 'Coffee', (10, 10), angle, font, fill=(255,255,255))
+        self.DrawRotatedText(\
+                self.disp.buffer, 'Club', (10, 70), angle, font, fill=(255,255,255))
+        self.DrawRotatedText(\
+                self.disp.buffer, 'Scan Badge', (10, 180), angle, fonttwo, fill=(230,230,230))
+        self.DrawRotatedText(\
+                self.disp.buffer, 'Get Coffee', (10, 200), angle, fonttwo, fill=(230,230,230))
+        self.disp.display()
+
+    # Display Brewscreen
+    def DrawBrew(self):
+        font = ImageFont.truetype('Play With Fire.ttf',42)
+        fonttwo = ImageFont.truetype('Momt___.ttf',22)
+        angle = 0
+        self.disp.buffer.paste((0,0,0), (0, 0, 240, 240))
+        self.DrawRotatedText( \
+                self.disp.buffer, 'Brewing', (10, 10), angle, font, fill=(0,255,0))
+        self.DrawRotatedText(\
+                self.disp.buffer, 'Yum yum!', (10, 90), angle, fonttwo, fill=(230,230,230))
+        self.DrawRotatedText(\
+                self.disp.buffer, 'Issues?', (10, 130), angle, fonttwo, fill=(230,230,230))
+        self.DrawRotatedText(\
+                self.disp.buffer, 'Check help sheet', (10, 150), angle, fonttwo, fill=(230,230,230))
+        self.DrawRotatedText(\
+                self.disp.buffer, 'or contact Chris', (10, 170), angle, fonttwo, fill=(230,230,230))
+        self.DrawRotatedText(\
+                self.disp.buffer, 'Wallace', (10, 190), angle, fonttwo, fill=(230,230,230))
+        self.disp.display()
+
+    # Display Deniedscreen
+    def DrawDenied(self):
+        font = ImageFont.truetype('Play With Fire.ttf',42)
+        fonttwo = ImageFont.truetype('Momt___.ttf',22)
+        angle = 0
+        self.disp.buffer.paste((0,0,0), (0, 0, 240, 240))
+        self.DrawRotatedText( \
+                self.disp.buffer, 'Sorry', (10, 10), angle, font, fill=(0,0,255))
+        self.DrawRotatedText(\
+                self.disp.buffer, 'Badge not', (10, 90), angle, fonttwo, fill=(230,230,230))
+        self.DrawRotatedText(\
+                self.disp.buffer, 'recognized. To', (10, 110), angle, fonttwo, fill=(230,230,230))
+        self.DrawRotatedText(\
+                self.disp.buffer, 'join the coffee', (10, 130), angle, fonttwo, fill=(230,230,230))
+        self.DrawRotatedText(\
+                self.disp.buffer, 'club contact', (10, 150), angle, fonttwo, fill=(230,230,230))
+        self.DrawRotatedText(\
+                self.disp.buffer, 'Crystal Nassori', (10, 170), angle, fonttwo, fill=(230,230,230))
+        self.disp.display()
+
+    # Display Adminscreen
+    def DrawAdmin(self):
+        font = ImageFont.truetype('Play With Fire.ttf',42)
+        fonttwo = ImageFont.truetype('MAGIMTOS.ttf',32)
+        angle = 0
+        self.disp.buffer.paste((50,0,0), (0, 0, 240, 240))
+        self.DrawRotatedText( \
+                self.disp.buffer, 'Admin', (10, 10), angle, font,
+                             fill=(200,0,50))
+        self.DrawRotatedText(\
+                self.disp.buffer, '1 Add', (10, 70), angle, fonttwo, fill=(230,230,230))
+        self.DrawRotatedText(\
+                self.disp.buffer, '2 Remove', (10, 110), angle, fonttwo, fill=(230,230,230))
+        self.DrawRotatedText(\
+                self.disp.buffer, '3 Stats', (10, 150), angle, fonttwo, fill=(230,230,230))
+        self.DrawRotatedText(\
+                self.disp.buffer, '4 Exit', (10, 190), angle, fonttwo, fill=(230,230,230))
+        self.disp.display()
+
+    # Display Addscreen
+    def DrawAdd(self):
+        font = ImageFont.truetype('Play With Fire.ttf',42)
+        fonttwo = ImageFont.truetype('MAGIMTOS.ttf',32)
+        angle = 0
+        self.disp.buffer.paste((50,0,0), (0, 0, 240, 240))
+        self.DrawRotatedText( \
+                self.disp.buffer, 'Admin', (10, 10), angle, font,
+                             fill=(200,0,50))
+        self.DrawRotatedText(\
+                self.disp.buffer, 'scan', (10, 70), angle, fonttwo, fill=(230,230,230))
+        self.DrawRotatedText(\
+                self.disp.buffer, 'first', (10, 110), angle, fonttwo, fill=(230,230,230))
+        self.DrawRotatedText(\
+                self.disp.buffer, 'last', (10, 150), angle, fonttwo, fill=(230,230,230))
+        self.DrawRotatedText(\
+                self.disp.buffer, '4 Exit', (10, 190), angle, fonttwo, fill=(230,230,230))
+        self.disp.display()
+
+    # Display Removescreen
+    def DrawRemove(self):
+        font = ImageFont.truetype('Play With Fire.ttf',42)
+        fonttwo = ImageFont.truetype('MAGIMTOS.ttf',32)
+        angle = 0
+        self.disp.buffer.paste((50,0,0), (0, 0, 240, 240))
+        self.DrawRotatedText( \
+                self.disp.buffer, 'Admin', (10, 10), angle, font,
+                             fill=(200,0,50))
+        self.DrawRotatedText(\
+                self.disp.buffer, 'first', (10, 70), angle, fonttwo, fill=(230,230,230))
+        self.DrawRotatedText(\
+                self.disp.buffer, 'last', (10, 110), angle, fonttwo, fill=(230,230,230))
+        self.DrawRotatedText(\
+                self.disp.buffer, '3 Remove', (10, 150), angle, fonttwo, fill=(230,230,230))
+        self.DrawRotatedText(\
+                self.disp.buffer, '4 Exit', (10, 190), angle, fonttwo, fill=(230,230,230))
+        self.disp.display()
