@@ -3,7 +3,7 @@
 Created on Wed Sep 30 13:49:52 2019
 Sets up the initial sqlite database for blackbean coffee maker
 
-@author: pz6hh8
+@author: Shaun Bowman
 """
  
 import datetime
@@ -11,11 +11,8 @@ import bbsql
 from datetime import timedelta
 
 DBPATH = r''
-DBNAME = r'bbsqlite.db'
+DBNAME = r'blackbean.db'
 
-#DBPATH = r'C:\Development\sqlite3\sqlitedb'
-#DBNAME = r'pythonsqlite.db'
- 
 myDb = bbsql.bbdb(DBPATH, DBNAME)
 output = myDb.command('SELECT name from sqlite_master where type= "table"')
 print(output)
@@ -205,7 +202,7 @@ for scan in scans:
                                 + found_date_real[0][0] + "','" \
                                 + str(found_person_id[0][0]) + "');" 
                             print(sql_write_drink)
-                            # yDb.commandcommit(sql_write_drink) # commentedout 
+                            # myDb.commandcommit(sql_write_drink) # commentedout 
             else:
                 print('Card not active')
 
