@@ -92,6 +92,71 @@ def drink(bb, scan):
             else:
                 print('Card not active')
 
+def DoStandby():
+    bb.DrawHome()
+    bb.LedStandby()
+
+def DoAdmin():
+    bb.DrawAdmin()
+    bb.LedAdmin()
+    num = raw_input()
+    if num == '1':
+        print('1')
+        DoAdd()
+    elif num == '2':
+        print('2')
+        DoRemove()
+    elif num == '3':
+        print('3')
+    else:
+        print('exit')
+        DoStandby()
+
+def DoAdd():
+    bb.DrawAdd()
+    entry = raw_input()
+    if entry == '4':
+        DoStandby()
+    else:
+        first = entry
+        print(entry)
+        entry = raw_input()
+        if entry == '4':
+            DoStandby()
+        else:
+            last = entry
+            print(entry)
+            DoStandby()
+
+def DoRemove():
+    bb.DrawRemove()
+    entry = raw_input()
+    if entry == '4':
+        DoStandby()
+    else:
+        first = entry
+        print(entry)
+        entry = raw_input()
+        if entry == '4' or entry =='3':
+            DoStandby()
+        else:
+            last = entry
+            print(entry)
+            entry = raw_input()
+            if entry == '3':
+                print('remove')
+                DoStandby()
+            else:
+                DoStandby()
+
+def DoDenied():
+    bb.DrawDenied()
+    bb.LedDenied()
+
+def DoBrew():
+    bb.DrawBrew()
+    bb.LedBrew()
+
 # MAIN:
 bb = blackbean.bbrun() # start blackbean program
 bb.DrawHome() # display homescreen
