@@ -28,17 +28,19 @@
 import datetime
 from datetime import timedelta
 import blackbean
+from time import sleep
 DBPATH = r''
 DBNAME = r'bbsqlite.db'
 
 
-def scan(bb, scan, date):
+def Scan(bb, scan, date):
     sql_insert_scan =   " INSERT INTO Scan(code, scan_date, date_real)" \
-                        +" VALUES ('"+scan[1]+"', '"+date.isoformat()+"', 'N');"
+                        +" VALUES ('"+scan+"', '"+date+"', 'Y');"
     print(sql_insert_scan)
-    #bb.bbdb.commandcommit(sql_insert_scan) # commented out to not duplicate
+    bb.bbdb.commandcommit(sql_insert_scan) # commented out to not duplicate
 
-def drink(bb, scan):
+def Drink(bb, scan):
+    scan = scan[0]
     scan_id = scan[0]
     code = scan[1]
     scan_date = scan[2]
@@ -53,6 +55,7 @@ def drink(bb, scan):
         is_active = bb.bbdb.commandfetchall(sql_det_acces)
         if is_active == []:
             print('Card not found')
+            return(0)
         else:
             if is_active[0][0] == "Y":
                 # card is authorized for drink
@@ -62,6 +65,7 @@ def drink(bb, scan):
                 found_scan_date = bb.bbdb.commandfetchall(sql_det_scan_date)
                 if found_scan_date == []:
                     print('Scan date not found')
+                    return(0)
                 else:
                     print('Scan date: '+found_scan_date[0][0])
                     scan_date = found_scan_date[0][0]
@@ -70,6 +74,7 @@ def drink(bb, scan):
                     found_date_real = bb.bbdb.commandfetchall(sql_det_scan_real)
                     if found_date_real ==[]:
                         print('Could not determine if date_real was real')
+                        return(0)
                     else:
                         print('Scan date real: '+found_date_real[0][0])
                         sql_get_personid = "SELECT person_id FROM Card WHERE \
@@ -78,6 +83,7 @@ def drink(bb, scan):
                         bb.bbdb.commandfetchall(sql_get_personid)
                         if found_person_id == []:
                             print('Cound not determine person_id')
+                            return(0)
                         else:
                             print('Person_id: ' + str(found_person_id[0][0]))
                             sql_write_drink = "INSERT into Drink(card_id, " \
@@ -86,9 +92,11 @@ def drink(bb, scan):
                                 + found_date_real[0][0] + "','" \
                                 + str(found_person_id[0][0]) + "');" 
                             print(sql_write_drink)
-                            # bb.bbdb.commandcommit(sql_write_drink) # commentedout 
+                            bb.bbdb.commandcommit(sql_write_drink) # commentedout 
+                            return(1)
             else:
                 print('Card not active')
+                return(0)
 
 def DoStandby():
     bb.DrawHome()
@@ -157,7 +165,25 @@ def DoDenied():
 
 def DoBrew():
     bb.DrawBrew()
+    bb.RelayOn()
+    sleep(1)
+    bb.RelayOff()
     bb.LedBrew()
+
+def DoScan(bb, code):
+    time = datetime.datetime.now().isoformat()
+    Scan(bb, code, time)
+    lastscan = bb.bbdb.commandfetchall('SELECT * FROM Scan ORDER BY \
+                                       scan_id DESC LIMIT 1')
+    DoDrink(bb, lastscan)
+
+def DoDrink(bb, scanrecord):
+    print('DoDrink')
+    passfail = Drink(bb, scanrecord)
+    if passfail == 1:
+        DoBrew()
+    else:
+        DoDenied()
 
 # MAIN:
 bb = blackbean.bbrun() # start blackbean program
