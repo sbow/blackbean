@@ -120,12 +120,14 @@ def DoAdd():
     else:
         first = entry
         print(entry)
+        bb.DrawRecieved(200, 120)
         entry = raw_input()
         if entry == '4':
             DoStandby()
         else:
             last = entry
             print(entry)
+            bb.DrawRecieved(200, 160)
             DoStandby()
 
 def DoRemove():
@@ -136,19 +138,21 @@ def DoRemove():
     else:
         first = entry
         print(entry)
+        bb.DrawRecieved(200, 80)
         entry = raw_input()
         if entry == '4' or entry =='3':
             DoStandby()
         else:
             last = entry
             print(entry)
+            bb.DrawRecieved(200, 120)
             entry = raw_input()
             if entry == '3':
                 print('remove')
+                bb.DrawRecieved(200, 160)
                 DoStandby()
             else:
                 DoStandby()
-
 def DoDenied():
     bb.DrawDenied()
     bb.LedDenied()

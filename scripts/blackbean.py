@@ -232,6 +232,16 @@ class bbrun:
                 self.disp.buffer, '4 Exit', (10, 190), angle, fonttwo, fill=(230,230,230))
         self.disp.display()
 
+    # Draw Recieved
+    def DrawRecieved(self, x, y):
+        font = ImageFont.truetype('arrow_7.ttf',42)
+        angle = 0
+        char = '&'
+        self.DrawRotatedText( \
+                self.disp.buffer, char, (x, y), angle, font,
+                             fill=(200,0,50))
+        self.disp.display()
+
     # Standbye Pulse
     def LedStandby(self):
         T_PULSE = 2
