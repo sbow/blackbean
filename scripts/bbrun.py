@@ -9,11 +9,9 @@
 #    Project blackbean is an office coffee maker that
 #    has had its "brew" button short-cirtuited via a
 #    relay connected to a Raspbery-Pi computer. The 
-#    computer is also connected to a RFID reader. The
-#    reader is able to read the company ID card 
-#    employees carry with them to access the building.
-#    If an employee scan's their badge, and the badge
-#    ID number matches one wherin they have access to
+#    computer is also connected to a RFID reader. 
+#    If a member scan's their card, and the card
+#    number matches one wherin they have access to
 #    the coffe maker - the raspberry pi via this
 #    program causes a relay to close such that the 
 #    brew button is pressed & a coffee is brewed.
