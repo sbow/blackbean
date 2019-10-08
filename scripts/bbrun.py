@@ -101,6 +101,19 @@ def Drink(bb, scan):
 def DoStandby():
     bb.DrawHome()
     bb.LedStandby()
+    bb.bbsc.spin() # wait for scan
+    code = bb.bbsc.parse() # get scan result
+    DoScan(bb, code)
+    #date = datetime.datetime.now().isoformat()
+    #print('code: '+code)
+    #print('date: '+date)
+    #Scan(bb, code, date)
+    #scan = bb.bbdb.commandfetchall('SELECT * FROM Scan ORDER BY scan_id DESC LIMIT 1')
+    # validate = Drink(bb, scan) # validate 
+    # if validate == 1:
+    #     DoBrew()
+    # else:
+    #     DoDenied()
 
 def DoAdmin():
     bb.DrawAdmin()
@@ -162,13 +175,17 @@ def DoRemove():
 def DoDenied():
     bb.DrawDenied()
     bb.LedDenied()
+    sleep(10)
+    DoStandby()
 
 def DoBrew():
     bb.DrawBrew()
     bb.RelayOn()
-    sleep(1)
+    sleep(4)
     bb.RelayOff()
     bb.LedBrew()
+    sleep(20)
+    DoStandby()
 
 def DoScan(bb, code):
     time = datetime.datetime.now().isoformat()
@@ -195,3 +212,4 @@ bb.DrawDenied()
 bb.LedDenied()
 bb.DrawAdmin()
 bb.LedAdmin()
+DoStandby()

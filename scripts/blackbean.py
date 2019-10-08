@@ -9,6 +9,7 @@
 #   Initial framework of controller
 
 import bbsql # sqlite database interface class
+import bbscan # PN532 RFID interface class
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
@@ -19,10 +20,13 @@ from gpiozero import RGBLED, LED
 from time import sleep
 
 class bbrun:
+    # PN532 Scanner object
+    bbsc = None # PN532 object
+
     #Coffee Maker Database Setup
     DATABASE = r'blackbean.db'
     DATAPATH = r''
-    bbdb = None
+    bbdb = None # sqlite object
     
     #TFT Display Setup - ST7789 Adafruit 240x240 1.54" SPI
     PIN_DC = 24 
@@ -62,6 +66,10 @@ class bbrun:
     
         # Initialize blackbean database class
         self.bbdb = bbsql.bbdb(self.DATAPATH, self.DATABASE)
+
+        # Initialize PN532 RFID class
+        self.bbsc = bbscan.bbscan()
+        print(self.bbsc.resp)
 
     def LedDemo(self):
     	self.led.pulse(self.T_PULSE, self.T_PULSE, self.C_TEAL, self.C_GREEN)
