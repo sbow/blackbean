@@ -29,6 +29,8 @@ import datetime
 from datetime import timedelta
 import blackbean
 from time import sleep
+import time
+import threading
 DBPATH = r''
 DBNAME = r'bbsqlite.db'
 
@@ -101,19 +103,12 @@ def Drink(bb, scan):
 def DoStandby():
     bb.DrawHome()
     bb.LedStandby()
+    t = threading.Timer(3600.0, DoScreensaver, [bb])
+    t.start() # after 1hr turn off display, leave LED
     bb.bbsc.spin() # wait for scan
+    t.cancel()
     code = bb.bbsc.parse() # get scan result
     DoScan(bb, code)
-    #date = datetime.datetime.now().isoformat()
-    #print('code: '+code)
-    #print('date: '+date)
-    #Scan(bb, code, date)
-    #scan = bb.bbdb.commandfetchall('SELECT * FROM Scan ORDER BY scan_id DESC LIMIT 1')
-    # validate = Drink(bb, scan) # validate 
-    # if validate == 1:
-    #     DoBrew()
-    # else:
-    #     DoDenied()
 
 def DoAdmin():
     bb.DrawAdmin()
@@ -201,6 +196,10 @@ def DoDrink(bb, scanrecord):
         DoBrew()
     else:
         DoDenied()
+
+def DoScreensaver(bb):
+    # called by timer
+    bb.disp.clear()
 
 # MAIN:
 bb = blackbean.bbrun() # start blackbean program

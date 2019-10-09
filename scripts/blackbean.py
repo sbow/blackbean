@@ -180,7 +180,7 @@ class bbrun:
         self.DrawRotatedText(\
                 self.disp.buffer, 'club contact', (10, 150), angle, fonttwo, fill=(230,230,230))
         self.DrawRotatedText(\
-                self.disp.buffer, 'Crystal Nassori', (10, 170), angle, fonttwo, fill=(230,230,230))
+                self.disp.buffer, 'Shaun Bowman', (10, 170), angle, fonttwo, fill=(230,230,230))
         self.disp.display()
 
     # Display Adminscreen
