@@ -1,6 +1,8 @@
 # BlackBean
+![Blackbean Logo](https://raw.githubusercontent.com/sbow/blackbean/master/blackbean.png)
 
 Project Blackbean - a controller for a office coffee machine.
+
 
 ## Hardware
 - Raspberry PI Zero W
