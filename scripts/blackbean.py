@@ -10,6 +10,7 @@
 
 import bbsql # sqlite database interface class
 import bbscan # PN532 RFID interface class
+import bbenc # encryption class
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
@@ -20,6 +21,9 @@ from gpiozero import RGBLED, LED
 from time import sleep
 
 class bbrun:
+    # BBEnc encryption object
+    bbenc = None
+
     # PN532 Scanner object
     bbsc = None # PN532 object
 
@@ -70,6 +74,11 @@ class bbrun:
         # Initialize PN532 RFID class
         self.bbsc = bbscan.bbscan()
         print(self.bbsc.resp)
+
+        # Initialize encryption class
+        self.bbenc = bbenc.bbenc()
+        self.bbenc.load_public()
+        print(self.bbenc.resp)
 
     def LedDemo(self):
     	self.led.pulse(self.T_PULSE, self.T_PULSE, self.C_TEAL, self.C_GREEN)

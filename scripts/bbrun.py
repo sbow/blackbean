@@ -36,24 +36,24 @@ DBNAME = r'bbsqlite.db'
 
 
 def Scan(bb, scan, date):
-    sql_insert_scan =   " INSERT INTO Scan(code, scan_date, date_real)" \
-                        +" VALUES ('"+scan+"', '"+date+"', 'Y');"
+    sql_insert_scan =   " INSERT INTO Scan(code_enc, scan_date, date_real, code, code_encrypt)" \
+                        +" VALUES ('"+scan+"', '"+date+"', 'Y', 'Secret', 'Secret');"
     print(sql_insert_scan)
     bb.bbdb.commandcommit(sql_insert_scan) # commented out to not duplicate
 
 def Drink(bb, scan):
     scan = scan[0]
     scan_id = scan[0]
-    code = scan[1]
+    code = scan[6]   # note, code is encrypted
     scan_date = scan[2]
     date_real = scan[3]
-    sql_find_code = "SELECT card_id FROM Card WHERE code in('"+code+"');"
-    print("Scan ID:" + str(scan_id) + " Code=" + code + " scan_date=" + scan_date)
+    sql_find_code = "SELECT card_id FROM Card WHERE code_enc in('"+code+"');"
+    print("Scan ID:" + str(scan_id) + " Code_enc=" + code + " scan_date=" + scan_date)
     found_card = bb.bbdb.commandfetchall(sql_find_code)
     if found_card != []:
         # found card
         card_id = found_card[0][0]
-        sql_det_acces = "SELECT active FROM Card WHERE code in('"+code+"');"
+        sql_det_acces = "SELECT active FROM Card WHERE code_enc in('"+code+"');"
         is_active = bb.bbdb.commandfetchall(sql_det_acces)
         if is_active == []:
             print('Card not found')
@@ -80,7 +80,7 @@ def Drink(bb, scan):
                     else:
                         print('Scan date real: '+found_date_real[0][0])
                         sql_get_personid = "SELECT person_id FROM Card WHERE \
-                                code in ('"+code+"');"
+                                code_enc in ('"+code+"');"
                         found_person_id = \
                         bb.bbdb.commandfetchall(sql_get_personid)
                         if found_person_id == []:
@@ -108,7 +108,9 @@ def DoStandby():
     bb.bbsc.spin() # wait for scan
     t.cancel()
     code = bb.bbsc.parse() # get scan result
-    DoScan(bb, code)
+    encrypted = str(bb.bbenc.encrypt(code))
+    #enc_json = bb.bbenc.serialize(encrypted)
+    DoScan(bb, encrypted)
 
 def DoAdmin():
     bb.DrawAdmin()
@@ -183,6 +185,7 @@ def DoBrew():
     DoStandby()
 
 def DoScan(bb, code):
+    #note code is encrypted
     time = datetime.datetime.now().isoformat()
     Scan(bb, code, time)
     lastscan = bb.bbdb.commandfetchall('SELECT * FROM Scan ORDER BY \
