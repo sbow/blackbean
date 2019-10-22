@@ -1,2 +1,7 @@
 bbsqlite.db
 blackbean.db
+*.pem
+*.pyc
+*.swp
+*.msg
+*.md.swp
