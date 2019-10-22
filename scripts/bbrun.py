@@ -53,54 +53,64 @@ def Drink(bb, scan):
     print("Scan ID:" + str(scan_id) + " Code_enc=" + code + " scan_date=" + scan_date)
     found_card = bb.bbdb.commandfetchall(sql_find_code)
     if found_card != []:
-        # found card
-        card_id = found_card[0][0]
-        sql_det_acces = "SELECT active FROM Card WHERE code_enc in('"+code+"');"
-        is_active = bb.bbdb.commandfetchall(sql_det_acces)
-        if is_active == []:
-            print('Card not found')
+        sql_det_admin = "SELECT admn FROM Card WHERE code_enc in('"+code+"');"
+        is_admin = bb.bbdb.commandfetchall(sql_det_admin)
+        if is_admin == []:
+            print('Admin field not found')
             return(0)
         else:
-            if is_active[0][0] == "Y":
-                # card is authorized for drink
-                print('Yes for drink')
-                sql_det_scan_date = "SELECT scan_date FROM Scan WHERE scan_id"\
-                                    " in('"+str(scan_id)+"');"
-                found_scan_date = bb.bbdb.commandfetchall(sql_det_scan_date)
-                if found_scan_date == []:
-                    print('Scan date not found')
+            if is_admin[0][0] == "Y":
+                #administrator card detected
+                DoAdmin(bb)
+            else:
+                # found card
+                card_id = found_card[0][0]
+                sql_det_acces = "SELECT active FROM Card WHERE code_enc in('"+code+"');"
+                is_active = bb.bbdb.commandfetchall(sql_det_acces)
+                if is_active == []:
+                    print('Card not found')
                     return(0)
                 else:
-                    print('Scan date: '+found_scan_date[0][0])
-                    scan_date = found_scan_date[0][0]
-                    sql_det_scan_real = "SELECT date_real FROM Scan WHERE \
-                            scan_id in('"+str(scan_id)+"');"
-                    found_date_real = bb.bbdb.commandfetchall(sql_det_scan_real)
-                    if found_date_real ==[]:
-                        print('Could not determine if date_real was real')
-                        return(0)
-                    else:
-                        print('Scan date real: '+found_date_real[0][0])
-                        sql_get_personid = "SELECT person_id FROM Card WHERE \
-                                code_enc in ('"+code+"');"
-                        found_person_id = \
-                        bb.bbdb.commandfetchall(sql_get_personid)
-                        if found_person_id == []:
-                            print('Cound not determine person_id')
+                    if is_active[0][0] == "Y":
+                        # card is authorized for drink
+                        print('Yes for drink')
+                        sql_det_scan_date = "SELECT scan_date FROM Scan WHERE scan_id"\
+                                            " in('"+str(scan_id)+"');"
+                        found_scan_date = bb.bbdb.commandfetchall(sql_det_scan_date)
+                        if found_scan_date == []:
+                            print('Scan date not found')
                             return(0)
                         else:
-                            print('Person_id: ' + str(found_person_id[0][0]))
-                            sql_write_drink = "INSERT into Drink(card_id, " \
-                                + "scan_date, date_real, person_id) VALUES('" \
-                                + str(card_id) + "','" + scan_date + "','" \
-                                + found_date_real[0][0] + "','" \
-                                + str(found_person_id[0][0]) + "');" 
-                            print(sql_write_drink)
-                            bb.bbdb.commandcommit(sql_write_drink) # commentedout 
-                            return(1)
-            else:
-                print('Card not active')
-                return(0)
+                            print('Scan date: '+found_scan_date[0][0])
+                            scan_date = found_scan_date[0][0]
+                            sql_det_scan_real = "SELECT date_real FROM Scan WHERE \
+                                    scan_id in('"+str(scan_id)+"');"
+                            found_date_real = bb.bbdb.commandfetchall(sql_det_scan_real)
+                            if found_date_real ==[]:
+                                print('Could not determine if date_real was real')
+                                return(0)
+                            else:
+                                print('Scan date real: '+found_date_real[0][0])
+                                sql_get_personid = "SELECT person_id FROM Card WHERE \
+                                        code_enc in ('"+code+"');"
+                                found_person_id = \
+                                bb.bbdb.commandfetchall(sql_get_personid)
+                                if found_person_id == []:
+                                    print('Cound not determine person_id')
+                                    return(0)
+                                else:
+                                    print('Person_id: ' + str(found_person_id[0][0]))
+                                    sql_write_drink = "INSERT into Drink(card_id, " \
+                                        + "scan_date, date_real, person_id) VALUES('" \
+                                        + str(card_id) + "','" + scan_date + "','" \
+                                        + found_date_real[0][0] + "','" \
+                                        + str(found_person_id[0][0]) + "');" 
+                                    print(sql_write_drink)
+                                    bb.bbdb.commandcommit(sql_write_drink) # commentedout 
+                                    return(1)
+                    else:
+                        print('Card not active')
+                        return(0)
 
 def DoStandby():
     bb.DrawHome()
@@ -114,7 +124,7 @@ def DoStandby():
     #enc_json = bb.bbenc.serialize(encrypted)
     DoScan(bb, encrypted)
 
-def DoAdmin():
+def DoAdmin(bb):
     bb.DrawAdmin()
     bb.LedAdmin()
     num = raw_input()
