@@ -27,10 +27,12 @@
 #Coffee Maker Database Setup
 import datetime
 from datetime import timedelta
-import blackbean
 from time import sleep
 import time
 import threading
+import random
+import os
+import blackbean
 DBPATH = r''
 DBNAME = r'bbsqlite.db'
 
@@ -175,13 +177,16 @@ def DoDenied():
     sleep(10)
     DoStandby()
 
-def DoBrew():
+def DoBrew(bb):
     bb.DrawBrew()
     bb.RelayOn()
     sleep(4)
     bb.RelayOff()
     bb.LedBrew()
-    sleep(20)
+    DoFortune(bb)
+    sleep(15)
+    DoImage(bb)
+    sleep(15)
     DoStandby()
 
 def DoScan(bb, code):
@@ -192,11 +197,44 @@ def DoScan(bb, code):
                                        scan_id DESC LIMIT 1')
     DoDrink(bb, lastscan)
 
+# Find if card gets fortune cookie. If so, get fortune & display
+def DoFortune(bb):
+    lastscan = bb.lastscan
+    code = lastscan[6]
+    sql_find_fortune = "SELECT EggTwo FROM Card WHERE code_enc in('"+code+"');"
+    found_card = bb.bbdb.commandfetchall(sql_find_fortune)
+    if found_card != []:
+        # found card
+        do_fortune = found_card[0][0]
+        if do_fortune == 'Y':
+            sql_find_nfortune = "SELECT MAX(fortune_id) FROM Fortune;"
+            nfortune = bb.bbdb.commandfetchall(sql_find_nfortune)
+            nfortune = nfortune[0][0] # integer, max ID, number of fortunes
+            nselect = random.randint(1,nfortune)
+            sql_get_fortune = "SELECT fortune FROM Fortune WHERE fortune_id" \
+                    " in ('"+str(nselect)+"');"
+            fortune = bb.bbdb.commandfetchall(sql_get_fortune)
+            if fortune != []:
+                fortune = fortune[0][0]
+                print(fortune)
+                bb.DrawFortune(fortune)
+
+# Display random image
+def DoImage(bb):
+    IMGDIR = '/home/pi/git/blackbean/scripts/imgs'
+    imgs = os.listdir(IMGDIR)
+    n_imgs = len(imgs)
+    img_sel = random.randint(0,n_imgs-1)
+    print('img sel: '+imgs[img_sel])
+    bb.DisplayImage(IMGDIR, imgs[img_sel])
+
+
 def DoDrink(bb, scanrecord):
     print('DoDrink')
     passfail = Drink(bb, scanrecord)
     if passfail == 1:
-        DoBrew()
+        bb.lastscan = scanrecord[0]
+        DoBrew(bb)
     else:
         DoDenied()
 

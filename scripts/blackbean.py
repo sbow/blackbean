@@ -17,6 +17,7 @@ from PIL import ImageFont
 import Adafruit_ST7789 as TFT
 import Adafruit_GPIO as GPIO
 import Adafruit_GPIO.SPI as SPI
+import textwrap
 from gpiozero import RGBLED, LED
 from time import sleep
 
@@ -51,6 +52,9 @@ class bbrun:
     C_TEAL  = (1,0.8,0.5)
     T_PULSE = 0.5
     led = None
+
+    # Last scan array - to be used by functions in bbrun
+    lastscan = None
 
     def __init__(self):
     	self.led = RGBLED(self.PIN_RED, self.PIN_GREEN, self.PIN_BLUE)
@@ -135,6 +139,32 @@ class bbrun:
         rotated = textimage.rotate(angle, expand=1)
         # Paste the text into the image, using it as a mask for transparency.
         image.paste(rotated, position, rotated)
+
+    # Display Fortune
+    def DrawFortune(self, fortune):
+        font = ImageFont.truetype('Momt___.ttf',22)
+        angle = 0
+        self.disp.buffer.paste((0,0,0), (0,0,240,240))
+        length = len(fortune) # number of characters
+        CHARLINEMAX = 16
+        LINEMAX = 10
+        LINESPACE = 20
+        XSTART = 10
+        YSTART = 10
+        FILL = (255,255,255)
+        lines = textwrap.wrap(fortune, CHARLINEMAX, break_long_words=False)
+        x = XSTART
+        y = YSTART
+        for line in lines:
+            self.DrawRotatedText( \
+                self.disp.buffer, line, (x,y), angle, font, fill=FILL)
+            y = y + LINESPACE
+        self.disp.display()
+
+    # Display Image
+    def DisplayImage(self, dirname, imagename):
+        image = Image.open(dirname+"/"+imagename) #assume 240x240
+        self.disp.display(image) # assume angle 0
 
     # Display Homescreen
     def DrawHome(self):
