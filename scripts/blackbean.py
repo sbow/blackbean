@@ -223,6 +223,19 @@ class bbrun:
         self.disp.display()
 
     # Display Adminscreen
+    def DrawAdminIp(self,ipString):
+        font = ImageFont.truetype('Play With Fire.ttf',42)
+        fonttwo = ImageFont.truetype('MAGIMTOS.ttf',32)
+        angle = 0
+        self.disp.buffer.paste((50,0,0), (0, 0, 240, 240))
+        self.DrawRotatedText( \
+            self.disp.buffer, 'IP Address:', (10, 10), angle, font,
+            fill=(200,0,50))
+        self.DrawRotatedText( \
+            self.disp.buffer, ipString, (10, 110), angle, fonttwo, fill=(230,230,230))
+        self.disp.display()
+
+    # Display Adminscreen
     def DrawAdmin(self):
         font = ImageFont.truetype('Play With Fire.ttf',42)
         fonttwo = ImageFont.truetype('MAGIMTOS.ttf',32)

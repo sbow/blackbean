@@ -33,6 +33,8 @@ import threading
 import random
 import os
 import blackbean
+import socket
+
 DBPATH = r''
 DBNAME = r'bbsqlite.db'
 
@@ -125,20 +127,24 @@ def DoStandby():
     DoScan(bb, encrypted)
 
 def DoAdmin(bb):
-    bb.DrawAdmin()
-    bb.LedAdmin()
-    num = raw_input()
-    if num == '1':
-        print('1')
-        DoAdd()
-    elif num == '2':
-        print('2')
-        DoRemove()
-    elif num == '3':
-        print('3')
-    else:
-        print('exit')
-        DoStandby()
+    deviceIp = socket.gethostbyname(socket.gethostname())
+    bb.DrawAdminIp(deviceIp)
+    sleep(10)
+    DoStandby()
+#    bb.DrawAdmin()
+#    bb.LedAdmin()
+#    num = raw_input()
+#    if num == '1':
+#        print('1')
+#        DoAdd()
+#    elif num == '2':
+#        print('2')
+#        DoRemove()
+#    elif num == '3':
+#        print('3')
+#    else:
+#        print('exit')
+#        DoStandby()
 
 def DoAdd():
     bb.DrawAdd()
