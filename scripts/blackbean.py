@@ -229,10 +229,17 @@ class bbrun:
         angle = 0
         self.disp.buffer.paste((50,0,0), (0, 0, 240, 240))
         self.DrawRotatedText( \
-            self.disp.buffer, 'IP Address:', (10, 10), angle, font,
+            self.disp.buffer, 'IP:', (10, 10), angle, font,
             fill=(200,0,50))
+        ipString = ipString.split('.')
         self.DrawRotatedText( \
-            self.disp.buffer, ipString, (10, 110), angle, fonttwo, fill=(230,230,230))
+            self.disp.buffer, ipString[0], (10, 80), angle, fonttwo, fill=(230,230,230))
+        self.DrawRotatedText( \
+            self.disp.buffer, ipString[1], (10, 115), angle, fonttwo, fill=(230,230,230))
+        self.DrawRotatedText( \
+            self.disp.buffer, ipString[2], (10, 150), angle, fonttwo, fill=(230,230,230))
+        self.DrawRotatedText( \
+            self.disp.buffer, ipString[3], (10, 185), angle, fonttwo, fill=(230,230,230))
         self.disp.display()
 
     # Display Adminscreen

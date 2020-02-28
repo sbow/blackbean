@@ -127,7 +127,9 @@ def DoStandby():
     DoScan(bb, encrypted)
 
 def DoAdmin(bb):
-    deviceIp = socket.gethostbyname(socket.gethostname())
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.connect(("8.8.8.8", 80))
+    deviceIp = sock.getsockname()[0]
     bb.DrawAdminIp(deviceIp)
     sleep(10)
     DoStandby()
