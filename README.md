@@ -8,7 +8,7 @@ Project Blackbean - a controller for a office coffee machine.
 - Raspberry PI Zero W
 - Sandisk 16 gb micro SD card
 - Raspberry pi USB power supply
-- Relay (Solidstate, Omron G3NA-210B)
+- Generic 5v low closign current relay (Solidstate is a poor choice - inconsistant switching, ie Omron G3NA-210B)
 - RGB LED (CA, PN: Q16F5CZZRGB24ECA)
 - TFT Display (Adafruit ST7789 1.3" 240x240)
 - (Card reader)
